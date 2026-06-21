@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#16140F}
+  ::selection{background:#E0703F;color:#16140F}
+  a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
+  a:hover{border-bottom-color:#E0703F}
+  .masonry{column-gap:14px}
+  .pin{break-inside:avoid;-webkit-column-break-inside:avoid;margin:0 0 14px;display:block}
+  .frame{position:relative;border-radius:14px;overflow:hidden;background:#1C1A14;box-shadow:0 1px 2px rgba(0,0,0,0.4);transition:transform 0.16s ease, box-shadow 0.16s ease, outline-color 0.16s ease;outline:2px solid transparent;outline-offset:2px;cursor:pointer}
+  .pin:hover .frame{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,0.5)}
+  .pin.active .frame{outline-color:#E0703F}
+  .pinimg{width:100%;height:100%;object-fit:cover;display:block}
+  .cap{margin-top:7px;font-size:11px;padding:0 3px;color:#8A8474;opacity:0;transition:opacity 0.16s ease}
+  .pin:hover .cap,.pin.active .cap{opacity:1}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="background:#16140F;color:#C8C2B4;font-family:'IBM Plex Mono',monospace;min-height:100vh;width:100%;font-size:14px;line-height:1.75">
+ <div style="max-width:1100px;margin:0 auto;padding:52px 28px 96px">
+
+  <!-- breadcrumb -->
+  <div style="margin-bottom:28px;color:#8A8474;font-size:13px"><a href="index.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">~/harshal</a> / <span style="color:#C8C2B4">pins</span></div>
+
+  <!-- header -->
+  <div style="margin-bottom:6px"><span style="color:#8A8474"># </span><span style="font-weight:600;font-size:17px">pins</span></div>
+  <div style="color:#8A8474;margin-bottom:32px">&nbsp;&nbsp;a wall of photos &amp; random things i've pointed a camera at.</div>
+
+  <!-- FEATURED -->
+  <div style="display:flex;flex-wrap:wrap;gap:0;margin-bottom:44px;background:#1C1A14;border:1px solid #38332A;border-radius:18px;overflow:hidden">
+    <div style="flex:1 1 460px;min-width:280px;background:#0E0D0A;display:flex;align-items:center;justify-content:center;min-height:360px;max-height:70vh;padding:10px">
+      <img ref="{{ featImg }}" alt="" style="display:none;max-width:100%;max-height:calc(70vh - 20px);object-fit:contain;border-radius:8px"/>
+      <div ref="{{ featEmpty }}" style="text-align:center;color:#5A5446;font-size:13px;line-height:1.7;padding:40px">
+        <div style="font-size:30px;margin-bottom:10px">⌐■_■</div>
+        nothing pinned yet.<br>photos are coming soon.
+      </div>
+    </div>
+    <div style="flex:1 1 300px;max-width:380px;padding:30px 26px;display:flex;flex-direction:column;gap:14px;min-height:360px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span ref="{{ featNum }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;color:#E0703F">—</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#5A5446">featured</span>
+      </div>
+      <div ref="{{ featCap }}" style="font-size:25px;line-height:1.25;color:#E8E3D6;font-weight:600">welcome to the wall</div>
+      <div style="font-size:12px;color:#8A8474">a pin on harshal's wall.</div>
+      <div style="flex:1"></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:#5A5446;padding-top:14px;border-top:1px solid #2A261F">click any card below to bring it up here ↓</div>
+    </div>
+  </div>
+
+  <!-- ALL PINS -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <span style="color:#8A8474;font-size:13px">## all pins</span>
+    <span style="flex:1;height:1px;background:#2A261F"></span>
+  </div>
+
+  <div class="masonry" ref="{{ boardRef }}" style="columns:200px">
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/01.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>01 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:1/1"><img class="pinimg" src="pins/02.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>02 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:3/5"><img class="pinimg" src="pins/03.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>03 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:4/3"><img class="pinimg" src="pins/04.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>04 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:4/5"><img class="pinimg" src="pins/05.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>05 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:1/1"><img class="pinimg" src="pins/06.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>06 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:2/3"><img class="pinimg" src="pins/07.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>07 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/08.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>08 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:4/5"><img class="pinimg" src="pins/09.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>09 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:3/2"><img class="pinimg" src="pins/10.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>10 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:1/1"><img class="pinimg" src="pins/11.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>11 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+    <figure class="pin">
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/12.jpg" alt="" loading="lazy"></div>
+      <figcaption class="cap"><span>12 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
+    </figure>
+
+  </div>
+
+  <!-- nav -->
+  <div style="margin-top:40px;padding-top:24px;border-top:1px solid #38332A;font-size:13px">
+    <a href="index.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">← home</a>
+  </div>
+
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  boardRef = React.createRef();
+  featImg = React.createRef();
+  featEmpty = React.createRef();
+  featNum = React.createRef();
+  featCap = React.createRef();
+
+  componentDidMount(){
+    const board = this.boardRef.current;
+    if(!board) return;
+    const figs = Array.from(board.querySelectorAll('figure.pin'));
+
+    const imgOf = (fig) => fig.querySelector('img.pinimg');
+    const isLoaded = (img) => img && img.complete && img.naturalWidth > 0;
+    const titleOf = (fig) => {
+      const spans = fig.querySelectorAll('figcaption span');
+      return spans.length > 1 ? spans[1].textContent.trim() : 'untitled';
+    };
+
+    this._feature = (fig) => {
+      const img = imgOf(fig);
+      if(!isLoaded(img)) return;
+      const n = figs.indexOf(fig) + 1;
+      this.featImg.current.src = img.currentSrc || img.src;
+      this.featImg.current.style.display = 'block';
+      this.featEmpty.current.style.display = 'none';
+      this.featNum.current.textContent = 'pin ' + String(n).padStart(2, '0');
+      this.featCap.current.textContent = titleOf(fig);
+      figs.forEach((f) => f.classList.toggle('active', f === fig));
+      this._active = fig;
+    };
+
+    figs.forEach((fig) => {
+      const img = imgOf(fig);
+      // cards whose photo doesn't exist (yet) simply hide
+      if(img){
+        if(img.complete && img.naturalWidth === 0){ fig.style.display = 'none'; }
+        img.addEventListener('error', () => { fig.style.display = 'none'; });
+        img.addEventListener('load', () => { if(!this._active) this._feature(fig); });
+      }
+      fig.addEventListener('click', () => this._feature(fig));
+    });
+
+    // default: feature the first already-loaded pin (retry while images decode)
+    let tries = 0;
+    const seed = () => {
+      if(this._active) return;
+      const first = figs.find((f) => isLoaded(imgOf(f)));
+      if(first){ this._feature(first); return; }
+      if(tries++ < 40) setTimeout(seed, 150);
+    };
+    seed();
+  }
+
+  renderVals(){
+    return {
+      rootRef: this.rootRef, boardRef: this.boardRef,
+      featImg: this.featImg, featEmpty: this.featEmpty,
+      featNum: this.featNum, featCap: this.featCap
+    };
+  }
+}
+</script>
+</body>
+</html>
