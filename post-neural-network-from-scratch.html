@@ -39,12 +39,12 @@
 
   <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:38px 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>The Forward Pass: Simplifying with Matrices</h2>
   <p style="margin-bottom:20px">I started by rewriting the forward pass using matrices. Instead of looping through each input and weight, I realized I could express the entire layer operation as a single matrix multiplication:</p>
-  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/feed.png" alt="forward pass as a single matrix multiplication" style="max-width:100%;height:auto;display:block;margin:0 auto"/><figcaption style="color:#8A7E5E;font-size:12px;margin-top:10px">the forward pass, expressed as one matrix multiply</figcaption></figure>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="feed.png" alt="forward pass as a single matrix multiplication" style="max-width:100%;height:auto;display:block;margin:0 auto"/><figcaption style="color:#8A7E5E;font-size:12px;margin-top:10px">the forward pass, expressed as one matrix multiply</figcaption></figure>
   <p style="margin-bottom:20px">Notice the weight matrix dimensions (784×128). This isn't arbitrary — it's carefully designed to transform our 784-dimensional input into a 128-dimensional representation suitable for the next layer. Essentially, we're performing a linear transformation of the input space.</p>
 
   <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:38px 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Backward Pass: Gradient Updates Made Manageable</h2>
   <p style="margin-bottom:20px">The backward pass was initially the most challenging part. But with matrices, gradient calculations became surprisingly manageable. Let's assume we are using mean squared loss, then derivating it with respect to weights looks like this:</p>
-  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/backpas.png" alt="derivative of MSE loss w.r.t. weights" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="backpas.png" alt="derivative of MSE loss w.r.t. weights" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
   <p style="margin-bottom:20px">The equation finally boils down to multiplying the derivative of the loss function with the input matrix <code style="background:#221F18;color:#E6B392;padding:1px 6px;border-radius:3px;font-size:13px">X</code>.</p>
   <p style="margin-bottom:20px">Also, the matrix operations handle all samples simultaneously, eliminating per-sample loops. This is where the true power of matrix notation shines.</p>
 
@@ -58,19 +58,19 @@
   </ul>
 
   <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">1.</span><p>The code starts off by initializing weights and bias matrices.</p></div>
-  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/initial.png" alt="initializing weight and bias matrices" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="initial.png" alt="initializing weight and bias matrices" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
 
   <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">2.</span><p>Then I wrote the forward pass equations.</p></div>
-  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/feedforward.png" alt="forward pass equations" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="feedforward.png" alt="forward pass equations" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
 
   <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">3.</span><p>Next challenge was to find the derivative of the loss function — i.e. the cross-entropy loss — with respect to weights. This is how the derivation looks (nothing fancy, simple plain calculus):</p></div>
-  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/cross.png" alt="derivative of cross-entropy loss" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="cross.png" alt="derivative of cross-entropy loss" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
 
   <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">4.</span><p>Now writing the backward pass function was pretty easy, as the derivative of the cross-entropy loss boils down to a simple equation <code style="background:#221F18;color:#E6B392;padding:1px 6px;border-radius:3px;font-size:13px">[y_pred - y_true] * X</code>.</p></div>
-  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/back.png" alt="backward pass function" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="back.png" alt="backward pass function" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
 
   <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">5.</span><p>Although it wasn't about getting good accuracy, the network still performs well.</p></div>
-  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/pred.png" alt="predictions" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="pred.png" alt="predictions" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
 
   <p style="color:#8A8474;font-style:italic;margin-bottom:24px">(turns out you cannot escape writing training and testing epochs)</p>
   <p style="margin-bottom:8px">I hope you gained some good insights from this — have a good day!</p>
