@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#16140F}
+  ::selection{background:#E0703F;color:#16140F}
+  a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
+  a:hover{border-bottom-color:#E0703F}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+</style>
+</helmet>
+
+<div style="background:#16140F;color:#E8E3D6;font-family:'IBM Plex Mono',monospace;min-height:100vh;width:100%;font-size:14px;line-height:1.75">
+ <div style="max-width:680px;margin:0 auto;padding:64px 28px 96px">
+
+  <!-- header -->
+  <div style="margin-bottom:6px"><span style="color:#8A8474"># </span><span style="font-weight:600;font-size:17px">harshal rudra</span></div>
+  <div style="color:#8A8474;margin-bottom:22px">&nbsp;&nbsp;masters @ iiitb '27 · bangalore, in</div>
+  <p style="line-height:1.7;margin-bottom:34px;max-width:62ch">Building AI systems <a href="https://outmarket.ai">@outmarket.ai</a> and researching audio-driven talking-head synthesis at the <a href="https://mpl.iiitb.ac.in">multimodal perception lab</a>, iiit bangalore. Trying to understand how machines learn, through linear algebra, statistics &amp; calculus. And still trying to find a match on bumble.</p>
+
+  <!-- currently -->
+  <div style="color:#8A8474;margin-bottom:18px">## currently</div>
+
+  <div style="margin-bottom:30px">
+    <div><span style="color:#E0703F">[outmarket.ai]</span> <span style="font-weight:600">ai intern</span> · summer 2026</div>
+    <div style="padding-left:20px;border-left:1px solid #38332A;margin-top:8px;margin-left:2px">
+      <div>Working across the AI systems that turn unstructured information into structured, trustworthy data.</div>
+      <div style="color:#9C9685;margin-top:8px">- config-driven systems replacing repetitive hand-written logic</div>
+      <div style="color:#9C9685">- LLM extraction → structured, source-attributed records</div>
+      <div style="color:#9C9685">- human-in-the-loop review interfaces · production hardening</div>
+      <div style="color:#6E6857;font-style:italic;margin-top:8px">// kept light, internship in progress</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:38px">
+    <div><span style="color:#E0703F">[mpl-iiitb × openstream.ai]</span> <span style="font-weight:600">ml research</span> · jan–may 2026</div>
+    <div style="padding-left:20px;border-left:1px solid #38332A;margin-top:8px;margin-left:2px">
+      <div>Audio-driven talking-head synthesis, a speaking face from a voice and a single image.</div>
+      <div style="color:#9C9685;margin-top:8px">- motion-first FOMM redesign: keypoints → motion → render</div>
+      <div style="color:#9C9685">- diffusion stabilization under mixed-precision (AMP)</div>
+      <div style="color:#9C9685">- two-stage audio→landmark→render; pivot to FLAME 3D face</div>
+    </div>
+  </div>
+
+  <!-- projects -->
+  <div style="color:#8A8474;margin-bottom:22px">## projects</div>
+
+  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
+    <div ref="{{ heliosRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:96px">    ●   ●    
+     ╲ ╱     
+●─────●─────●
+     ╱ ╲     
+    ●   ●    </div>
+    <div style="flex:1;min-width:250px">
+      <a href="https://github.com/TheHarshal30/Helios" style="font-weight:600">helios</a> <span style="color:#8A8474">↗  AI policy analysis &amp; risk-gap engine</span>
+      <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">LLM triplet extraction builds a coverage knowledge graph (NetworkX, not vector RAG), then a two-sided matcher runs business-risk ⟷ policy-coverage gap analysis.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
+    <div ref="{{ archimedesRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:104px">         ┌───┐
+───── ▸→ │███│
+─────    │███│
+─────    │   │
+─────    │   │
+         └───┘</div>
+    <div style="flex:1;min-width:250px">
+      <a href="https://archimedes-website-nine.vercel.app/" style="font-weight:600">archimedes</a> <span style="color:#8A8474">↗  AI research assistant &nbsp;<span style="color:#E0703F">[live]</span></span>
+      <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">Searches arXiv + OpenAlex, analyzes every paper with an LLM, and synthesizes the evidence into one structured, citable answer, streamed live and exportable as a PDF.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
+    <div ref="{{ skinwiseRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:88px">  ┌──────┐
+  │░░░░░░│
+  │▒▒▒▒▒▒│
+  │      │
+  │      │
+  └──────┘</div>
+    <div style="flex:1;min-width:250px">
+      <a href="https://github.com/TheHarshal30/skinwise" style="font-weight:600">skinwise</a> <span style="color:#8A8474">↗  on-device diagnosis</span>
+      <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">Android app that diagnoses diseases with an LLM running fully on-device, no servers, nothing leaves your phone. Funded by the state government.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px">
+    <div ref="{{ eclipseRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:88px">   ██
+   ██   ██
+ ████  ████
+ ██████████
+ ──────────∑
+</div>
+    <div style="flex:1;min-width:250px">
+      <a href="https://github.com/TheHarshal30/eclipse" style="font-weight:600">eclipse</a> <span style="color:#8A8474">↗  on-device expenses</span>
+      <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">Android app that tallies your expenses in seconds and, as a side quest, dishes out personal-finance advice, all on-device, zero privacy invaded. Funded by my university.</div>
+    </div>
+  </div>
+
+  <!-- writing -->
+  <div style="color:#8A8474;margin:38px 0 18px">## writing</div>
+  <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:38px">
+    <div><span style="color:#8A8474">001&nbsp;&nbsp;</span><a href="post-neural-network-from-scratch.html" style="color:#E8E3D6;border-bottom-color:rgba(232,227,214,0.25)">How I Built a Neural Network from Scratch Without Losing My Mind</a><div style="color:#8A8474;padding-left:34px;font-size:13px">a complex network reduces to matrix multiplications.</div></div>
+    <div><span style="color:#8A8474">002&nbsp;&nbsp;</span><a href="post-well-behaved-matrices.html" style="color:#E8E3D6;border-bottom-color:rgba(232,227,214,0.25)">The Curious Case of Well-Behaved Matrices</a><div style="color:#8A8474;padding-left:34px;font-size:13px">orthogonal init keeps gradients from vanishing/exploding.</div></div>
+    <div><span style="color:#8A8474">003&nbsp;&nbsp;</span><a href="post-persistent-orthogonality.html" style="color:#E8E3D6;border-bottom-color:rgba(232,227,214,0.25)">The Persistent Orthogonality of Trained Weight Matrices</a><div style="color:#8A8474;padding-left:34px;font-size:13px">weights stay orthogonal long after training ends.</div></div>
+  </div>
+
+  <!-- connect -->
+  <div style="color:#8A8474;margin-bottom:18px">## connect</div>
+  <div style="margin-bottom:34px"><a href="https://github.com/theharshal30">github</a> · <a href="https://twitter.com/herschelle___">twitter</a> · <a href="https://www.linkedin.com/in/harshalrudra">linkedin</a> · <a href="https://www.instagram.com/theharshalrudra">instagram</a></div>
+
+  <div style="color:#8A8474">let's build something that learns. <span style="display:inline-block;width:8px;height:15px;background:#E0703F;vertical-align:-3px;animation:blink 1.1s step-end infinite"></span></div>
+
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  heliosRef = React.createRef();
+  archimedesRef = React.createRef();
+  skinwiseRef = React.createRef();
+  eclipseRef = React.createRef();
+
+  componentDidMount(){
+    const mk = (R,C) => Array.from({length:R}, () => Array(C).fill(' '));
+    const out = (g) => g.map(r => r.join('')).join('\n');
+
+    // Helios — assembling a coverage knowledge graph (hub + spokes)
+    const helios = (t) => {
+      const R=5, C=13, g=mk(R,C);
+      const set=(x,y,c)=>{ if(y>=0&&y<R&&x>=0&&x<C) g[y][x]=c; };
+      const spokes=[
+        {n:[0,2],  e:[[1,2],[2,2],[3,2],[4,2],[5,2]], c:'─'},
+        {n:[4,0],  e:[[5,1]], c:'╲'},
+        {n:[8,0],  e:[[7,1]], c:'╱'},
+        {n:[12,2], e:[[7,2],[8,2],[9,2],[10,2],[11,2]], c:'─'},
+        {n:[8,4],  e:[[7,3]], c:'╲'},
+        {n:[4,4],  e:[[5,3]], c:'╱'}
+      ];
+      const phase=Math.floor(t/360)%9, shown=Math.min(phase,6);
+      for(let i=0;i<shown;i++){ const s=spokes[i]; s.e.forEach(([x,y])=>set(x,y,s.c)); set(s.n[0],s.n[1],'●'); }
+      set(6,2,'●');
+      return out(g);
+    };
+
+    // Archimedes — reading many papers, synthesizing one document
+    const archimedes = (t) => {
+      const R=6, C=14, g=mk(R,C);
+      const set=(x,y,c)=>{ if(y>=0&&y<R&&x>=0&&x<C) g[y][x]=c; };
+      const step=Math.floor(t/430)%6;            // 0 clear · 1-4 read · 5 hold
+      for(let y=1;y<=4;y++) for(let x=0;x<=4;x++) set(x,y,'─');   // the papers
+      if(step>=1&&step<=4){ set(5,step,'▸'); set(6,step,'→'); }   // scan head
+      set(9,0,'┌'); set(13,0,'┐'); set(9,5,'└'); set(13,5,'┘');   // output doc
+      for(let x=10;x<=12;x++){ set(x,0,'─'); set(x,5,'─'); }
+      for(let y=1;y<=4;y++){ set(9,y,'│'); set(13,y,'│'); }
+      const filled=Math.min(step,4);
+      for(let i=0;i<filled;i++){ set(10,1+i,'█'); set(11,1+i,'█'); set(12,1+i,'█'); }
+      return out(g);
+    };
+
+    // skinwise — an on-device scan inside a phone, then a diagnosis
+    const skinwise = (t) => {
+      const R=6, C=12, g=mk(R,C);
+      const set=(x,y,c)=>{ if(y>=0&&y<R&&x>=0&&x<C) g[y][x]=c; };
+      set(2,0,'┌'); set(9,0,'┐'); set(2,5,'└'); set(9,5,'┘');
+      for(let x=3;x<=8;x++){ set(x,0,'─'); set(x,5,'─'); }
+      for(let y=1;y<=4;y++){ set(2,y,'│'); set(9,y,'│'); }
+      const p=(t%2200)/2200;
+      if(p<0.7){
+        const scanY=1+(p/0.7)*4;
+        for(let y=1;y<=4;y++) for(let x=3;x<=8;x++){
+          if(y<scanY-0.5) set(x,y,'░');
+          if(Math.abs(y-scanY)<0.5) set(x,y,'▒');
+        }
+      } else {
+        set(5,2,'✓'); set(6,2,'✓');
+        for(let x=4;x<=7;x++) set(x,3,'─');
+      }
+      return out(g);
+    };
+
+    // Eclipse — tallying expense bars into a running total
+    const eclipse = (t) => {
+      const R=6, C=12, g=mk(R,C);
+      const set=(x,y,c)=>{ if(y>=0&&y<R&&x>=0&&x<C) g[y][x]=c; };
+      for(let x=1;x<=10;x++) set(x,4,'─');       // baseline
+      const targets=[2,4,1,3,2], cols=[1,3,5,7,9];
+      const step=Math.floor(t/300)%8;            // bars fill one by one, then hold
+      for(let i=0;i<cols.length;i++){
+        const h=Math.max(0, Math.min(targets[i], step-i));
+        for(let k=0;k<h;k++){ set(cols[i],3-k,'█'); set(cols[i]+1,3-k,'█'); }
+      }
+      set(11,4,'∑');
+      return out(g);
+    };
+
+    const loop = (t) => {
+      if(this.heliosRef.current) this.heliosRef.current.textContent = helios(t);
+      if(this.archimedesRef.current) this.archimedesRef.current.textContent = archimedes(t);
+      if(this.skinwiseRef.current) this.skinwiseRef.current.textContent = skinwise(t);
+      if(this.eclipseRef.current) this.eclipseRef.current.textContent = eclipse(t);
+      this._raf = requestAnimationFrame(loop);
+    };
+    this._raf = requestAnimationFrame(loop);
+  }
+  componentWillUnmount(){ if(this._raf) cancelAnimationFrame(this._raf); }
+
+  renderVals(){
+    return {
+      heliosRef: this.heliosRef,
+      archimedesRef: this.archimedesRef,
+      skinwiseRef: this.skinwiseRef,
+      eclipseRef: this.eclipseRef
+    };
+  }
+}
+</script>
+</body>
+</html>

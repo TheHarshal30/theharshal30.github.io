@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#16140F}
+  ::selection{background:#E0703F;color:#16140F}
+  a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
+  a:hover{border-bottom-color:#E0703F}
+  .eq{margin:22px 0;color:#E8E3D6;overflow-x:auto;overflow-y:hidden}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="background:#16140F;color:#C8C2B4;font-family:'IBM Plex Mono',monospace;min-height:100vh;width:100%;font-size:14.5px;line-height:1.9">
+ <div style="max-width:720px;margin:0 auto;padding:56px 28px 96px">
+
+  <div style="margin-bottom:30px;color:#8A8474;font-size:13px"><a href="index.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">~/harshal</a> / <span style="color:#8A8474">writing</span> / <span style="color:#C8C2B4">003</span></div>
+
+  <h1 style="font-size:clamp(25px,4vw,33px);font-weight:600;color:#E8E3D6;line-height:1.18;letter-spacing:-0.01em;margin-bottom:14px">The Persistent Orthogonality of Trained Weight Matrices</h1>
+  <div style="color:#8A8474;font-size:12px;border-bottom:1px solid #38332A;padding-bottom:22px;margin-bottom:30px">weight-matrices · perturbation-theory · training</div>
+
+  <!-- TL;DR -->
+  <div style="border-left:2px solid #E0703F;padding:4px 0 4px 20px;margin-bottom:34px">
+    <div style="color:#E0703F;font-size:12px;letter-spacing:0.06em;margin-bottom:12px">TL;DR</div>
+    <div style="margin-bottom:12px"><strong style="color:#E8E3D6;font-weight:600">Implicit regularization.</strong> Gradient descent isn't a blind search; it respects the initial parameterization, gently changing the weights without violently breaking the beneficial structure we started with.</div>
+    <div style="margin-bottom:12px"><strong style="color:#E8E3D6;font-weight:600">Training stability.</strong> Orthogonal matrices preserve norms, which helps prevent exploding or vanishing gradients. The derivation shows training maintains this property — why orthogonal initialization often trains more stably.</div>
+    <div><strong style="color:#E8E3D6;font-weight:600">A new perspective.</strong> Carefully chosen initializations aren't just a good starting point — they can define a <em style="font-style:italic">subspace</em> or <em style="font-style:italic">manifold</em> within which the entire optimization process occurs.</div>
+  </div>
+
+  <p style="margin-bottom:20px">I was surprised to notice that weight matrices initialized orthogonally tend to remain nearly orthogonal even after training. This got me thinking — even after applying nonlinear activations and running gradient descent over and over, that structure should have collapsed.</p>
+  <p style="margin-bottom:20px">Experimenting with generated data and a few steps of training was somehow preserving the orthogonality, but this wasn't a reasonable explanation. I was looking for a good mathematical proof of this persistence.</p>
+  <p style="margin-bottom:20px">Then I recalled Gilbert Strang's discussion on matrix perturbation theory — <em style="font-style:italic">how small changes in a matrix affect its properties</em>. That instantly clicked: perhaps training won't change the matrix completely but only perturbs it, so the structure remains intact. And the only way to track these changes is to measure how much $W^\top W$ drifts away from the identity matrix (since the weights are initialized orthogonally, $W^\top W$ before training equals the identity).</p>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Playing around with gradient descent</h2>
+  <div class="eq">$$W_{t+1} = W_t - \eta \nabla \mathcal{L}(W_t)$$</div>
+  <p style="margin-bottom:20px">If I apply this repeatedly, I get something like this:</p>
+  <div class="eq">$$\begin{aligned} W_t &amp;= W_{t-1} - \eta \nabla \mathcal{L}(W_{t-1}) \\ &amp;= \big(W_{t-2} - \eta \nabla \mathcal{L}(W_{t-2})\big) - \eta \nabla \mathcal{L}(W_{t-1}) \\ &amp;\,\,\vdots \\ &amp;= W_0 - \eta \sum_{k=0}^{t-1} \nabla \mathcal{L}(W_k). \end{aligned}$$</div>
+  <p style="margin-bottom:20px">So after unrolling the gradients, I can write the weight matrix before and after training as:</p>
+  <div class="eq">$$W(t) - W(0) \;=\; -\,\eta \sum_{k=0}^{t-1} \nabla \mathcal{L}\!\left(W(k)\right).$$</div>
+  <p style="margin-bottom:20px">If I use gradient clipping, which sets a threshold on the gradient values:</p>
+  <div class="eq">$$\bigl\|\nabla \mathcal{L}(W_k)\bigr\| \;\le\; G \quad \text{for all } k,$$</div>
+  <p style="margin-bottom:20px">then by the triangle inequality and submultiplicativity I can write the gradient-descent equation as:</p>
+  <div class="eq">$$\|W(t) - W(0)\| \;=\; \left\| \eta \sum_{k=0}^{t-1} \nabla \mathcal{L}(W_k) \right\| \;\le\; \eta \sum_{k=0}^{t-1} \bigl\|\nabla \mathcal{L}(W_k)\bigr\| \;\le\; \eta \, t \, G.$$</div>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Measuring how far the weights drift from identity</h2>
+  <p style="margin-bottom:20px">To find out how far the weight matrix is from being an identity, I have to calculate the value of</p>
+  <div class="eq">$$\lVert W(t)^{\top} W(t) - W(0)^{\top} W(0) \rVert$$</div>
+  <p style="margin-bottom:20px">For this I used a very common matrix identity from perturbation theory:</p>
+  <div class="eq">$$A^\top A - B^\top B \;=\; A^\top(A-B) + (A^\top - B^\top)B.$$</div>
+  <p style="margin-bottom:20px">It can be easily verified that the LHS and RHS are the same (left as an exercise for the reader). Now by applying norms and using submultiplicativity and the triangle inequality, the following can be derived:</p>
+  <div class="eq">$$\|A^\top A - B^\top B\| \;\le\; \|A^\top(A-B)\| + \|(A^\top - B^\top)B\| \;\le\; \|A\|\,\|A-B\| + \|A-B\|\,\|B\|.$$</div>
+  <div class="eq">$$\boxed{\;\|A^\top A - B^\top B\| \;\le\; (\|A\| + \|B\|)\,\|A-B\|\;}$$</div>
+  <p style="margin-bottom:20px">And since</p>
+  <div class="eq">$$\|A\| + \|B\| \leq 2 \max(\|A\|, \|B\|)$$</div>
+  <p style="margin-bottom:20px">I can rewrite the entire equation as</p>
+  <div class="eq">$$\boxed{\;\|A^\top A - B^\top B\| \;\le\; 2\,\max(\|A\|,\|B\|)\,\|A-B\|\;}$$</div>
+
+  <h3 style="font-size:15px;font-weight:600;color:#E8E3D6;margin:28px 0 12px"><span style="color:#8A8474">### </span>Using this identity for the weights</h3>
+  <p style="margin-bottom:20px">Let $A = W(t)$, $B = W(0)$. Then</p>
+  <div class="eq">$$\|W(t)^\top W(t) - W(0)^\top W(0)\| \;\le\; 2 \,\max\big(\|W(t)\|, \|W(0)\|\big)\,\|W(t) - W(0)\|$$</div>
+  <p style="margin-bottom:20px">I already know that</p>
+  <div class="eq">$$\|W(t) - W(0)\| \;\le\; \eta \, t \, G.$$</div>
+  <p style="margin-bottom:20px">Substituting this into the equation above:</p>
+  <div class="eq">$$\|W(t)^\top W(t) - W(0)^\top W(0)\| \;\le\; 2 \,\max\big(\|W(t)\|, \|W(0)\|\big)\; \eta \, t \, G.$$</div>
+  <p style="margin-bottom:20px">The norm of $W(0)$ equals 1, so the equation becomes</p>
+  <div class="eq">$$\|W(t)^\top W(t) - W(0)^\top W(0)\| \;\le\; 2 \,\max\big(\|W(t)\|, 1\big)\; \eta \, t \, G.$$</div>
+  <p style="margin-bottom:20px">Thus we obtain an upper bound for how much the weight matrix differs from the orthogonally initialized matrix after training.</p>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <p style="margin-bottom:20px">I started with a simple observation: <strong style="color:#E8E3D6;font-weight:600">orthogonality persists</strong>. Through matrix perturbation theory, I found a mathematical bound for this phenomenon:</p>
+  <div class="eq">$$\|W(t)^\top W(t) - I\| \;\le\; 2 \,\max(\|W(t)\|, 1)\,\eta t G.$$</div>
+  <p style="margin-bottom:20px">At first glance, this bound seems circular — it requires knowing $\|W(t)\|$, a property of the trained matrix I was trying to understand. But this is where the observation and the theory converge beautifully: the very fact that we observe $W(t)$ to be nearly orthogonal means its singular values are all near $1$, so $\|W(t)\| \approx 1$. This collapses the bound into a much more intuitive form:</p>
+  <div class="eq">$$\|W(t)^\top W(t) - I\| \;\lesssim\; 2 \eta t G.$$</div>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Fascinating implications</h2>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span><strong style="color:#E8E3D6;font-weight:600">Implicit regularization:</strong> gradient descent respects the initial parameterization, gently changing the weights without breaking the structure we started with.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span><strong style="color:#E8E3D6;font-weight:600">Training stability:</strong> orthogonal matrices preserve norms, preventing exploding/vanishing gradients — and training maintains this property.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span><strong style="color:#E8E3D6;font-weight:600">A new perspective:</strong> a chosen initialization can define a <em style="font-style:italic">subspace</em> or <em style="font-style:italic">manifold</em> within which the whole optimization occurs.</span></li>
+  </ul>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Practically testing things</h2>
+  <p style="margin-bottom:20px">A mathematical bound is only as interesting as its connection to reality. To test the derivation, I trained a simple classifier on <strong style="color:#E8E3D6;font-weight:600">MNIST</strong> using orthogonally initialized weights and gradient clipping ($G = 1.0$). The theory gives a strict upper limit:</p>
+  <div class="eq">$$\|W(t)^\top W(t) - I\| \;\le\; 2 \,\max(\|W(t)\|, 1)\,\eta t G.$$</div>
+  <p style="margin-bottom:20px">After training for <strong style="color:#E8E3D6;font-weight:600">10 epochs</strong>, the model reached a respectable <strong style="color:#E8E3D6;font-weight:600">95.4% validation accuracy</strong>. The final numbers:</p>
+
+  <table style="width:100%;border-collapse:collapse;margin:8px 0 24px;font-size:13.5px">
+    <tbody>
+      <tr style="border-top:1px solid #38332A;border-bottom:1px solid #38332A"><td style="padding:10px 8px;color:#8A8474;font-size:11px;letter-spacing:0.06em">METRIC</td><td style="padding:10px 8px;color:#8A8474;font-size:11px;letter-spacing:0.06em;text-align:right">VALUE</td></tr>
+      <tr style="border-bottom:1px solid #2A261F"><td style="padding:10px 8px">Validation accuracy</td><td style="padding:10px 8px;text-align:right;color:#E8E3D6">0.9537</td></tr>
+      <tr style="border-bottom:1px solid #2A261F"><td style="padding:10px 8px">Final gradient norm $G$</td><td style="padding:10px 8px;text-align:right;color:#E8E3D6">0.9009</td></tr>
+      <tr style="border-bottom:1px solid #2A261F"><td style="padding:10px 8px">Final weight norm $\max(\lVert W(t)\rVert, 1)$</td><td style="padding:10px 8px;text-align:right;color:#E8E3D6">16.3235</td></tr>
+      <tr style="border-bottom:1px solid #2A261F"><td style="padding:10px 8px">Actual deviation $\lVert W^\top W - I\rVert$</td><td style="padding:10px 8px;text-align:right;color:#E8E3D6">4.1151</td></tr>
+      <tr style="border-bottom:1px solid #2A261F"><td style="padding:10px 8px">Theoretical upper bound</td><td style="padding:10px 8px;text-align:right;color:#E8E3D6">1508.95</td></tr>
+      <tr style="border-bottom:1px solid #38332A"><td style="padding:10px 8px">Bound / actual ratio</td><td style="padding:10px 8px;text-align:right;color:#E8E3D6">366.68</td></tr>
+    </tbody>
+  </table>
+
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/persistant.png" alt="deviation from identity vs. training steps, bound vs. actual" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <h3 style="font-size:15px;font-weight:600;color:#E8E3D6;margin:28px 0 12px"><span style="color:#8A8474">### </span>What does this mean?</h3>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span><strong style="color:#E8E3D6;font-weight:600">The bound holds:</strong> the actual deviation ($4.12$) is indeed less than the calculated upper bound ($1508.95$).</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span><strong style="color:#E8E3D6;font-weight:600">The bound is conservative:</strong> as is common, it's a worst-case scenario assuming all gradient updates conspire in the most destructive direction. In practice updates are noisy and cancel out, so the real change is much smaller.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span><strong style="color:#E8E3D6;font-weight:600">The real story is the trend:</strong> linear growth with $t$ and dependence on $\max(\|W(t)\|, 1)$ are the key insights — and the actual deviation staying orders of magnitude smaller shows training is a remarkably stable perturbation, not a destructive one.</span></li>
+  </ul>
+
+  <p style="margin-bottom:8px">Hope you got some good insights :) Have a great day!</p>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid #38332A;font-size:13px">
+    <a href="post-well-behaved-matrices.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">← well-behaved matrices</a>
+    <a href="index.html">home →</a>
+  </div>
+
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  componentDidMount(){
+    const render = () => {
+      if(window.renderMathInElement && this.rootRef.current){
+        window.renderMathInElement(this.rootRef.current, {
+          delimiters: [
+            {left:'$$', right:'$$', display:true},
+            {left:'$', right:'$', display:false}
+          ],
+          throwOnError: false
+        });
+        return true;
+      }
+      return false;
+    };
+    if(!render()){
+      let n = 0;
+      this._iv = setInterval(() => { if(render() || ++n > 120) clearInterval(this._iv); }, 80);
+    }
+  }
+  componentWillUnmount(){ if(this._iv) clearInterval(this._iv); }
+  renderVals(){ return { rootRef: this.rootRef }; }
+}
+</script>
+</body>
+</html>

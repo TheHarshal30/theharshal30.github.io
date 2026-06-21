@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#16140F}
+  ::selection{background:#E0703F;color:#16140F}
+  a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
+  a:hover{border-bottom-color:#E0703F}
+</style>
+</helmet>
+
+<div style="background:#16140F;color:#C8C2B4;font-family:'IBM Plex Mono',monospace;min-height:100vh;width:100%;font-size:14.5px;line-height:1.9">
+ <div style="max-width:720px;margin:0 auto;padding:56px 28px 96px">
+
+  <div style="margin-bottom:30px;color:#8A8474;font-size:13px"><a href="index.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">~/harshal</a> / <span style="color:#8A8474">writing</span> / <span style="color:#C8C2B4">002</span></div>
+
+  <h1 style="font-size:clamp(26px,4vw,34px);font-weight:600;color:#E8E3D6;line-height:1.18;letter-spacing:-0.01em;margin-bottom:14px">The Curious Case of Well-Behaved Matrices</h1>
+  <div style="color:#8A8474;font-size:12px;border-bottom:1px solid #38332A;padding-bottom:22px;margin-bottom:30px">weight-initialization · gradients · orthogonality</div>
+
+  <p style="margin-bottom:20px">A few days ago, a friend of mine suggested using "low-rank methods" in my neural-networks-from-scratch work, to showcase how basic concepts of linear algebra play an important role in neural networks. I started digging into the topic, and while surfing the internet, I stumbled upon a comment on Reddit saying, <em style="color:#E8E3D6;font-style:italic">"initialize your weights orthogonally for better stable gradients"</em>.</p>
+  <p style="margin-bottom:20px">The idea of orthogonally initialized weights is fascinating, but I couldn't find any good explanation stating why this method works — so I decided to cook up some math myself.</p>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>1. Understanding gradients</h2>
+  <p style="margin-bottom:20px">To understand how orthogonal initialization helps, I started analyzing the gradient matrix. I wrote the gradient equation and broke it into three major parts like this:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/gradeqn.png" alt="gradient equation broken into three parts" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:16px">This scary-looking expression is nothing but a chain of matrix products, which helps in visualizing how gradients flow in neural networks:</p>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:20px">
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>The <strong style="color:#E8E3D6;font-weight:600">first term</strong> is the gradient of the loss with respect to the output of the last layer.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>The <strong style="color:#E8E3D6;font-weight:600">middle term</strong> forms a sequence of <strong style="color:#E8E3D6;font-weight:600">Jacobian matrices</strong>, each representing how the output of one layer depends on the previous.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>The <strong style="color:#E8E3D6;font-weight:600">last term</strong> is the <em style="font-style:italic">local gradient</em> — i.e. how the output of layer (l) depends on its own weights.</span></li>
+  </ul>
+  <p style="margin-bottom:20px">What matters here is the middle product of Jacobians, because it carries the gradient signal backward through the layers.</p>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>2. Analyzing jacobians</h2>
+  <p style="margin-bottom:20px">Considering a linear layer like this:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/simplefeed.png" alt="a simple linear layer" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">Its Jacobian will be written as:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/jacobian.png" alt="the Jacobian of the layer" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">Again, a scary-looking equation, but it's just simple calculus.</p>
+  <h3 style="font-size:15px;font-weight:600;color:#E8E3D6;margin:24px 0 12px"><span style="color:#8A8474">### </span>Key observations from this equation</h3>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:20px">
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>If I use ReLU as my activation, then its derivative will be either 0 or 1.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>The Jacobian matrix is directly dependent on the weight matrix.</span></li>
+  </ul>
+  <p style="margin-bottom:20px">Thus, the product of Jacobian matrices in the first equation can be replaced by:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/jacobweight.png" alt="Jacobian product replaced by weight matrices" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>3. Expressing the gradient equation using matrix norms</h2>
+  <p style="margin-bottom:20px">Using the <a href="https://math.stackexchange.com/questions/487855/proof-of-matrix-norm-property-submultiplicativity">submultiplicative property of matrix norms</a> on the gradient equation:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/normanal.png" alt="gradient bounded by a product of norms" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">From the earlier equation, I rewrote the gradient equation by replacing the Jacobian matrix with the weight matrix like this:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/gradientnorm.png" alt="gradient norm in terms of weight norms" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>4. Case 1: Gaussian initialization of weights</h2>
+  <p style="margin-bottom:20px">If I initialize weights with entries drawn i.i.d. from a normal distribution:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/normal.png" alt="weights drawn from a normal distribution" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">Then the spectral norm of the weight matrix will be:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/root.png" alt="spectral norm proportional to root n" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:16px">This is because:</p>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:20px">
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>The output of multiplying a vector with Gaussian (W) is just a weighted sum of <strong style="color:#E8E3D6;font-weight:600">n</strong> Gaussian columns.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>Each component in such a product will be a Gaussian with variance 1.</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>Thus, the squared norm will be the expected value of a Gaussian, i.e. <strong style="color:#E8E3D6;font-weight:600">n</strong>.</span></li>
+  </ul>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/expected.png" alt="expected squared norm equals n" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">And thus we get:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/rootN.png" alt="spectral norm equals root n" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">In the equation from <em style="font-style:italic">Expressing the Gradient Equation Using Matrix Norms</em>, the spectral norm of the weight matrix will be replaced like this:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/spectral.png" alt="gradient norm with root-n factors" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">This will grow exponentially for (n &gt; 1) and vanish quickly for (n &lt; 1), and thus in turn affect the value of the gradient (as we proved earlier, gradient values directly depend upon the weight matrix).</p>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>5. Case 2: Orthogonal initialization</h2>
+  <p style="margin-bottom:20px">If we initialize weights orthogonally by using QR decomposition on weights sampled from a normal distribution, then we know that their singular values will be 1 because:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/ortho.png" alt="orthogonal matrix has singular values of 1" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">And thus, I can substitute this into the original gradient norm equations, resulting in:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/final.png" alt="stable gradient norm under orthogonal init" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">As you can see, the gradients are stable and won't explode or vanish even if we have huge depth in our neural network.</p>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Thank god, the math works out</h2>
+  <p style="margin-bottom:20px">I modified my code from the last blog by increasing the layers and their widths, and initializing weights orthogonally using QR decomposition.</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/modified.png" alt="modified network code" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">And it turns out that all the math I did till now works out (thank God!). I plotted the gradient norms vs. layer depth for Gaussian weights and orthogonal weights.</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/compare.png" alt="gradient norms vs depth: gaussian vs orthogonal" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:16px">Clearly, for Gaussian-initialized weights the gradient norms explode, while for orthogonally-initialized weights the gradient norms stay within a good range.</p>
+  <p style="color:#8A8474;font-style:italic;margin-bottom:20px">(I generated synthetic data using <code style="background:#221F18;color:#E6B392;padding:1px 6px;border-radius:3px;font-size:13px;font-style:normal">np.rand</code> for this.)</p>
+
+  <hr style="border:none;border-top:1px solid #38332A;margin:34px 0"/>
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:0 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>But how are the weights orthogonal throughout training???</h2>
+  <p style="margin-bottom:20px">I tried to verify whether the weights stay orthogonal — or nearly orthogonal — by tracking them during backpropagation:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/error.png" alt="tracking orthogonality during training" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">Even after working out the math and implementing everything, I still can't fully understand how the weights remain orthogonal or nearly orthogonal. Maybe a good topic for the next blog.</p>
+  <p style="margin-bottom:8px">Hope you got some good insights from this!</p>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid #38332A;font-size:13px">
+    <a href="post-neural-network-from-scratch.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">← neural network from scratch</a>
+    <a href="post-persistent-orthogonality.html">next: persistent orthogonality →</a>
+  </div>
+
+ </div>
+</div>
+</x-dc>
+</body>
+</html>

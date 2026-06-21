@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#16140F}
+  ::selection{background:#E0703F;color:#16140F}
+  a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
+  a:hover{border-bottom-color:#E0703F}
+</style>
+</helmet>
+
+<div style="background:#16140F;color:#C8C2B4;font-family:'IBM Plex Mono',monospace;min-height:100vh;width:100%;font-size:14.5px;line-height:1.9">
+ <div style="max-width:720px;margin:0 auto;padding:56px 28px 96px">
+
+  <!-- breadcrumb -->
+  <div style="margin-bottom:30px;color:#8A8474;font-size:13px"><a href="index.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">~/harshal</a> / <span style="color:#8A8474">writing</span> / <span style="color:#C8C2B4">001</span></div>
+
+  <!-- title -->
+  <h1 style="font-size:clamp(26px,4vw,34px);font-weight:600;color:#E8E3D6;line-height:1.18;letter-spacing:-0.01em;margin-bottom:14px">How I Built a Neural Network from Scratch Without Losing My Mind</h1>
+  <div style="color:#8A8474;font-size:12px;border-bottom:1px solid #38332A;padding-bottom:22px;margin-bottom:30px">neural-networks · linear-algebra · backprop</div>
+
+  <p style="color:#8A8474;font-style:italic;margin-bottom:24px">(just a quick heads up, this is not meant to be a coding tutorial but a way to visualize neural networks using linear algebra)</p>
+
+  <p style="margin-bottom:20px">After learning about neural networks from various tutorials and lectures, I decided to build one from scratch to understand the inner workings. However, a few days into the project, I found myself drowning in nested for-loops and struggling to keep track of the numerous variables involved in forward and backward propagation.</p>
+
+  <p style="margin-bottom:20px">That's when I had a thought: <strong style="color:#E8E3D6;font-weight:600">representing inputs and weights as matrices and using matrix transformations</strong> for propagation could simplify everything significantly. This approach would make the code easier to understand, visualize, and maintain.</p>
+
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:38px 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>The Forward Pass: Simplifying with Matrices</h2>
+  <p style="margin-bottom:20px">I started by rewriting the forward pass using matrices. Instead of looping through each input and weight, I realized I could express the entire layer operation as a single matrix multiplication:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/feed.png" alt="forward pass as a single matrix multiplication" style="max-width:100%;height:auto;display:block;margin:0 auto"/><figcaption style="color:#8A7E5E;font-size:12px;margin-top:10px">the forward pass, expressed as one matrix multiply</figcaption></figure>
+  <p style="margin-bottom:20px">Notice the weight matrix dimensions (784×128). This isn't arbitrary — it's carefully designed to transform our 784-dimensional input into a 128-dimensional representation suitable for the next layer. Essentially, we're performing a linear transformation of the input space.</p>
+
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:38px 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Backward Pass: Gradient Updates Made Manageable</h2>
+  <p style="margin-bottom:20px">The backward pass was initially the most challenging part. But with matrices, gradient calculations became surprisingly manageable. Let's assume we are using mean squared loss, then derivating it with respect to weights looks like this:</p>
+  <figure style="margin:24px 0;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/backpas.png" alt="derivative of MSE loss w.r.t. weights" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+  <p style="margin-bottom:20px">The equation finally boils down to multiplying the derivative of the loss function with the input matrix <code style="background:#221F18;color:#E6B392;padding:1px 6px;border-radius:3px;font-size:13px">X</code>.</p>
+  <p style="margin-bottom:20px">Also, the matrix operations handle all samples simultaneously, eliminating per-sample loops. This is where the true power of matrix notation shines.</p>
+
+  <h2 style="font-size:18px;font-weight:600;color:#E8E3D6;margin:38px 0 14px;line-height:1.3"><span style="color:#8A8474">## </span>Building the Full Network: MNIST Digit Recognition</h2>
+  <p style="margin-bottom:16px">With these insights, I built a 3-layer neural network for MNIST digit recognition:</p>
+  <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:24px">
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>Input layer (784 neurons)</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>Hidden layer (128 neurons with ReLU activation)</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>Output layer (10 neurons with Softmax)</span></li>
+    <li style="display:flex;gap:12px"><span style="color:#E0703F">-</span><span>Cross-entropy loss function</span></li>
+  </ul>
+
+  <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">1.</span><p>The code starts off by initializing weights and bias matrices.</p></div>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/initial.png" alt="initializing weight and bias matrices" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">2.</span><p>Then I wrote the forward pass equations.</p></div>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/feedforward.png" alt="forward pass equations" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">3.</span><p>Next challenge was to find the derivative of the loss function — i.e. the cross-entropy loss — with respect to weights. This is how the derivation looks (nothing fancy, simple plain calculus):</p></div>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/cross.png" alt="derivative of cross-entropy loss" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">4.</span><p>Now writing the backward pass function was pretty easy, as the derivative of the cross-entropy loss boils down to a simple equation <code style="background:#221F18;color:#E6B392;padding:1px 6px;border-radius:3px;font-size:13px">[y_pred - y_true] * X</code>.</p></div>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/back.png" alt="backward pass function" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <div style="display:flex;gap:14px;margin-bottom:8px"><span style="color:#E0703F;font-weight:600">5.</span><p>Although it wasn't about getting good accuracy, the network still performs well.</p></div>
+  <figure style="margin:14px 0 28px;background:#F4F1E9;border:1px solid #38332A;border-radius:5px;padding:16px;text-align:center"><img src="https://herschelle.netlify.app/pred.png" alt="predictions" style="max-width:100%;height:auto;display:block;margin:0 auto"/></figure>
+
+  <p style="color:#8A8474;font-style:italic;margin-bottom:24px">(turns out you cannot escape writing training and testing epochs)</p>
+  <p style="margin-bottom:8px">I hope you gained some good insights from this — have a good day!</p>
+
+  <!-- nav -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid #38332A;font-size:13px">
+    <a href="index.html" style="color:#8A8474;border-bottom-color:rgba(138,132,116,0.4)">← home</a>
+    <a href="post-well-behaved-matrices.html">next: well-behaved matrices →</a>
+  </div>
+
+ </div>
+</div>
+</x-dc>
+</body>
+</html>
