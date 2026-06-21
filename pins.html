@@ -18,16 +18,24 @@
   ::selection{background:#E0703F;color:#16140F}
   a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
   a:hover{border-bottom-color:#E0703F}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-  .pin{margin:0;display:block}
-  .frame{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:#1C1A14;box-shadow:0 1px 2px rgba(0,0,0,0.4);transition:transform 0.16s ease, box-shadow 0.16s ease, outline-color 0.16s ease;outline:2px solid transparent;outline-offset:2px;cursor:pointer}
-  .frame::after{content:'\2922';position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(14,13,10,0.72);color:#E0703F;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0.9;transition:opacity 0.16s ease, transform 0.16s ease;pointer-events:none}
+  /* desktop: pinterest-style masonry, each photo its natural shape */
+  .board{columns:200px;column-gap:14px}
+  .pin{break-inside:avoid;-webkit-column-break-inside:avoid;margin:0 0 14px;display:block}
+  .frame{position:relative;border-radius:14px;overflow:hidden;background:#1C1A14;box-shadow:0 1px 2px rgba(0,0,0,0.4);transition:transform 0.16s ease, box-shadow 0.16s ease, outline-color 0.16s ease;outline:2px solid transparent;outline-offset:2px;cursor:pointer}
   .pin:hover .frame{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,0.5)}
-  .pin:hover .frame::after{opacity:1;transform:scale(1.12)}
   .pin.active .frame{outline-color:#E0703F}
-  .pin.active .frame::after{content:'\25CF'}
   .pinimg{width:100%;height:100%;object-fit:cover;display:block}
-  .cap{margin-top:7px;font-size:11px;padding:0 3px;color:#8A8474}
+  .cap{margin-top:7px;font-size:11px;padding:0 3px;color:#8A8474;opacity:0;transition:opacity 0.16s ease}
+  .pin:hover .cap,.pin.active .cap{opacity:1}
+  /* mobile: clean clickable square grid */
+  @media(max-width:560px){
+    .board{columns:auto;column-gap:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+    .pin{break-inside:auto;margin:0}
+    .frame{aspect-ratio:1/1 !important}
+    .frame::after{content:'\2922';position:absolute;top:7px;right:7px;width:24px;height:24px;border-radius:50%;background:rgba(14,13,10,0.72);color:#E0703F;display:flex;align-items:center;justify-content:center;font-size:12px;pointer-events:none}
+    .pin.active .frame::after{content:'\25CF'}
+    .cap{opacity:1}
+  }
 </style>
 </helmet>
 
@@ -68,65 +76,65 @@
     <span style="flex:1;height:1px;background:#2A261F"></span>
   </div>
 
-  <div class="grid" ref="{{ boardRef }}">
+  <div class="board" ref="{{ boardRef }}">
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/01.jpg" alt="morning alibaug beaches have my heart" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:4/3"><img class="pinimg" src="pins/01.jpg" alt="morning alibaug beaches have my heart" loading="lazy"></div>
       <figcaption class="cap"><span>01 · </span><span style="color:#C8C2B4">morning alibaug beaches have my heart</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/02.jpg" alt="early morning flight views make the nightout at airports worth it" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/02.jpg" alt="early morning flight views make the nightout at airports worth it" loading="lazy"></div>
       <figcaption class="cap"><span>02 · </span><span style="color:#C8C2B4">early morning flight views make the nightout at airports worth it</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/03.jpg" alt="that one non-alcoholic era alibaug boys trip" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/03.jpg" alt="that one non-alcoholic era alibaug boys trip" loading="lazy"></div>
       <figcaption class="cap"><span>03 · </span><span style="color:#C8C2B4">that one non-alcoholic era alibaug boys trip</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/04.jpg" alt="random pune aesthetics" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:1944/1280"><img class="pinimg" src="pins/04.jpg" alt="random pune aesthetics" loading="lazy"></div>
       <figcaption class="cap"><span>04 · </span><span style="color:#C8C2B4">random pune aesthetics</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/05.jpg" alt="alcoholic era Goa trip" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:16/9"><img class="pinimg" src="pins/05.jpg" alt="alcoholic era Goa trip" loading="lazy"></div>
       <figcaption class="cap"><span>05 · </span><span style="color:#C8C2B4">alcoholic era Goa trip</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/06.jpg" alt="wilding out in Goa" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:2424/1600"><img class="pinimg" src="pins/06.jpg" alt="wilding out in Goa" loading="lazy"></div>
       <figcaption class="cap"><span>06 · </span><span style="color:#C8C2B4">wilding out in Goa</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/07.jpg" alt="blr performative cafe hoppings" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/07.jpg" alt="blr performative cafe hoppings" loading="lazy"></div>
       <figcaption class="cap"><span>07 · </span><span style="color:#C8C2B4">blr performative cafe hoppings</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/08.jpg" alt="niche artists concerts to pull bad bitches" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:16/9"><img class="pinimg" src="pins/08.jpg" alt="niche artists concerts to pull bad bitches" loading="lazy"></div>
       <figcaption class="cap"><span>08 · </span><span style="color:#C8C2B4">niche artists concerts to pull bad bitches</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/09.jpg" alt="" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/09.jpg" alt="" loading="lazy"></div>
       <figcaption class="cap"><span>09 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/10.jpg" alt="" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/10.jpg" alt="" loading="lazy"></div>
       <figcaption class="cap"><span>10 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/11.jpg" alt="" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/11.jpg" alt="" loading="lazy"></div>
       <figcaption class="cap"><span>11 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
     </figure>
 
     <figure class="pin">
-      <div class="frame"><img class="pinimg" src="pins/12.jpg" alt="" loading="lazy"></div>
+      <div class="frame" style="aspect-ratio:3/4"><img class="pinimg" src="pins/12.jpg" alt="" loading="lazy"></div>
       <figcaption class="cap"><span>12 · </span><span style="color:#C8C2B4">untitled</span></figcaption>
     </figure>
 
