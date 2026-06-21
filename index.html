@@ -19,6 +19,11 @@
   a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
   a:hover{border-bottom-color:#E0703F}
   @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  @media(max-width:560px){
+    .proj{flex-direction:column !important;gap:10px !important}
+    .proj .art{width:100% !important;overflow-x:auto}
+    .proj .body{min-width:0 !important;width:100%}
+  }
 </style>
 </helmet>
 
@@ -57,52 +62,52 @@
   <!-- projects -->
   <div style="color:#8A8474;margin-bottom:22px">## projects</div>
 
-  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
-    <div ref="{{ heliosRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:96px">    ●   ●    
+  <div class="proj" style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
+    <div class="art" ref="{{ heliosRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:96px">    ●   ●    
      ╲ ╱     
 ●─────●─────●
      ╱ ╲     
     ●   ●    </div>
-    <div style="flex:1;min-width:250px">
+    <div class="body" style="flex:1;min-width:250px">
       <a href="https://github.com/TheHarshal30/Helios" style="font-weight:600">helios</a> <span style="color:#8A8474">↗  AI policy analysis &amp; risk-gap engine</span>
       <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">LLM triplet extraction builds a coverage knowledge graph (NetworkX, not vector RAG), then a two-sided matcher runs business-risk ⟷ policy-coverage gap analysis.</div>
     </div>
   </div>
 
-  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
-    <div ref="{{ archimedesRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:104px">         ┌───┐
+  <div class="proj" style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
+    <div class="art" ref="{{ archimedesRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:104px">         ┌───┐
 ───── ▸→ │███│
 ─────    │███│
 ─────    │   │
 ─────    │   │
          └───┘</div>
-    <div style="flex:1;min-width:250px">
+    <div class="body" style="flex:1;min-width:250px">
       <a href="https://archimedes-website-nine.vercel.app/" style="font-weight:600">archimedes</a> <span style="color:#8A8474">↗  AI research assistant &nbsp;<span style="color:#E0703F">[live]</span></span>
       <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">Searches arXiv + OpenAlex, analyzes every paper with an LLM, and synthesizes the evidence into one structured, citable answer, streamed live and exportable as a PDF.</div>
     </div>
   </div>
 
-  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
-    <div ref="{{ skinwiseRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:88px">  ┌──────┐
+  <div class="proj" style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:30px">
+    <div class="art" ref="{{ skinwiseRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:88px">  ┌──────┐
   │░░░░░░│
   │▒▒▒▒▒▒│
   │      │
   │      │
   └──────┘</div>
-    <div style="flex:1;min-width:250px">
+    <div class="body" style="flex:1;min-width:250px">
       <a href="https://github.com/TheHarshal30/skinwise" style="font-weight:600">skinwise</a> <span style="color:#8A8474">↗  on-device diagnosis</span>
       <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">Android app that diagnoses diseases with an LLM running fully on-device, no servers, nothing leaves your phone. Funded by the state government.</div>
     </div>
   </div>
 
-  <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px">
-    <div ref="{{ eclipseRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:88px">   ██
+  <div class="proj" style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px">
+    <div class="art" ref="{{ eclipseRef }}" style="white-space:pre;font-size:11px;line-height:1.0;letter-spacing:0;color:#E0703F;flex:none;width:88px">   ██
    ██   ██
  ████  ████
  ██████████
  ──────────∑
 </div>
-    <div style="flex:1;min-width:250px">
+    <div class="body" style="flex:1;min-width:250px">
       <a href="https://github.com/TheHarshal30/eclipse" style="font-weight:600">eclipse</a> <span style="color:#8A8474">↗  on-device expenses</span>
       <div style="color:#B4AEA0;line-height:1.6;margin-top:6px">Android app that tallies your expenses in seconds and, as a side quest, dishes out personal-finance advice, all on-device, zero privacy invaded. Funded by my university.</div>
     </div>
