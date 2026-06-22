@@ -144,6 +144,10 @@
 
   <div style="color:#8A8474">let's build something that learns. <span style="display:inline-block;width:8px;height:15px;background:#E0703F;vertical-align:-3px;animation:blink 1.1s step-end infinite"></span></div>
 
+  <!-- hidden command line: press ":" then type a command (e.g. views) -->
+  <div id="cmdline" style="display:none;margin-top:18px;font-size:14px;color:#E8E3D6"><span style="color:#E0703F">:</span><input id="cmdinput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="background:transparent;border:0;outline:0;color:#E8E3D6;font:inherit;width:70%;caret-color:#E0703F"></div>
+  <div id="cmdout" style="margin-top:14px;font-size:13px;color:#8A8474"></div>
+
  </div>
 </div>
 </x-dc>
@@ -235,8 +239,64 @@ class Component extends DCLogic {
       this._raf = requestAnimationFrame(loop);
     };
     this._raf = requestAnimationFrame(loop);
+
+    // ----- hidden command line: press ":" then type a command (e.g. "views") -----
+    const ABACUS = 'https://abacus.jasoncameron.dev';
+    const NS = 'theharshal30-github-io', KEY = 'site-views';
+
+    // count this visitor exactly once (dedup via localStorage)
+    (async () => {
+      try {
+        if (localStorage.getItem('hr_counted')) return;
+        await fetch(ABACUS + '/hit/' + NS + '/' + KEY);
+        localStorage.setItem('hr_counted', '1');
+      } catch (e) {}
+    })();
+
+    const getViews = async () => {
+      try {
+        const r = await fetch(ABACUS + '/get/' + NS + '/' + KEY);
+        const j = await r.json();
+        return (j && typeof j.value === 'number') ? j.value : null;
+      } catch (e) { return null; }
+    };
+
+    const cmdline = document.getElementById('cmdline');
+    const cmdinput = document.getElementById('cmdinput');
+    const cmdout = document.getElementById('cmdout');
+    if (cmdline && cmdinput && cmdout) {
+      const openCmd = () => { cmdout.textContent = ''; cmdline.style.display = 'block'; cmdinput.value = ''; cmdinput.focus(); };
+      const closeCmd = () => { cmdline.style.display = 'none'; cmdinput.blur(); };
+
+      this._onKey = (e) => {
+        const tag = (e.target && e.target.tagName) || '';
+        const typing = tag === 'INPUT' || tag === 'TEXTAREA';
+        if (e.key === ':' && cmdline.style.display === 'none' && !typing) {
+          e.preventDefault(); openCmd();
+        } else if (e.key === 'Escape' && cmdline.style.display !== 'none') {
+          closeCmd();
+        }
+      };
+      document.addEventListener('keydown', this._onKey);
+
+      cmdinput.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const v = cmdinput.value.trim().toLowerCase();
+          closeCmd();
+          if (!v) return;
+          if (v === 'views') {
+            cmdout.textContent = ':views — counting…';
+            const n = await getViews();
+            cmdout.textContent = (n === null) ? ':views — unavailable right now' : ':views — ' + n.toLocaleString() + ' views';
+          } else {
+            cmdout.textContent = 'e: not a command: ' + v;
+          }
+        } else if (e.key === 'Escape') { closeCmd(); }
+      });
+    }
   }
-  componentWillUnmount(){ if(this._raf) cancelAnimationFrame(this._raf); }
+  componentWillUnmount(){ if(this._raf) cancelAnimationFrame(this._raf); if(this._onKey) document.removeEventListener('keydown', this._onKey); }
 
   renderVals(){
     return {
