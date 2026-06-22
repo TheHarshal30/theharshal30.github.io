@@ -48,6 +48,11 @@
     .wrap{padding-left:10px !important;padding-right:10px !important}
     .frame{border-radius:16px}
     .cap{display:none}
+    /* compact featured card on mobile (was ~full screen) */
+    .featimgwrap{min-height:0 !important;max-height:34vh !important;padding:6px !important}
+    .featimgwrap img{max-height:calc(34vh - 12px) !important}
+    .feattext{min-height:0 !important;max-width:none !important;padding:14px 16px !important;gap:7px !important}
+    .featcaptitle{font-size:18px !important}
   }
 </style>
 </helmet>
@@ -64,19 +69,19 @@
 
   <!-- FEATURED -->
   <div style="display:flex;flex-wrap:wrap;gap:0;margin-bottom:44px;background:#1C1A14;border:1px solid #38332A;border-radius:18px;overflow:hidden">
-    <div style="flex:1 1 460px;min-width:280px;background:#0E0D0A;display:flex;align-items:center;justify-content:center;min-height:360px;max-height:70vh;padding:10px">
+    <div class="featimgwrap" style="flex:1 1 460px;min-width:280px;background:#0E0D0A;display:flex;align-items:center;justify-content:center;min-height:360px;max-height:70vh;padding:10px">
       <img ref="{{ featImg }}" alt="" style="display:none;max-width:100%;max-height:calc(70vh - 20px);object-fit:contain;border-radius:8px"/>
       <div ref="{{ featEmpty }}" style="text-align:center;color:#5A5446;font-size:13px;line-height:1.7;padding:40px">
         <div style="font-size:30px;margin-bottom:10px">⌐■_■</div>
         nothing pinned yet.<br>photos are coming soon.
       </div>
     </div>
-    <div style="flex:1 1 300px;max-width:380px;padding:30px 26px;display:flex;flex-direction:column;gap:14px;min-height:360px">
+    <div class="feattext" style="flex:1 1 300px;max-width:380px;padding:30px 26px;display:flex;flex-direction:column;gap:14px;min-height:360px">
       <div style="display:flex;justify-content:space-between;align-items:baseline">
         <span ref="{{ featNum }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;color:#E0703F">—</span>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#5A5446">featured</span>
       </div>
-      <div ref="{{ featCap }}" style="font-size:25px;line-height:1.25;color:#E8E3D6;font-weight:600">welcome to the wall</div>
+      <div ref="{{ featCap }}" class="featcaptitle" style="font-size:25px;line-height:1.25;color:#E8E3D6;font-weight:600">welcome to the wall</div>
       <div style="font-size:12px;color:#8A8474">a pin on harshal's wall.</div>
       <div style="flex:1"></div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:#5A5446;padding-top:14px;border-top:1px solid #2A261F">click any card below to bring it up here ↓</div>
