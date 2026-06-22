@@ -31,22 +31,23 @@
   ::selection{background:#E0703F;color:#16140F}
   a{color:#E0703F;text-decoration:none;border-bottom:1px solid rgba(224,112,63,0.42)}
   a:hover{border-bottom-color:#E0703F}
-  /* desktop: pinterest-style masonry, each photo its natural shape */
-  .board{columns:200px;column-gap:14px}
-  .pin{break-inside:avoid;-webkit-column-break-inside:avoid;margin:0 0 14px;display:block}
+  /* varied-size masonry grid: wide photos become 2-col "hero" tiles.
+     row heights + column spans are finalized by JS (relayout). */
+  /* JS masonry: pins are absolutely positioned (see relayout). wide photos
+     span 2 columns as "hero" tiles; everything packs into the shortest column. */
+  .board{position:relative}
+  .pin{position:absolute;top:0;left:0;display:block;will-change:transform}
   .frame{position:relative;border-radius:14px;overflow:hidden;background:#1C1A14;box-shadow:0 1px 2px rgba(0,0,0,0.4);transition:transform 0.16s ease, box-shadow 0.16s ease, outline-color 0.16s ease;outline:2px solid transparent;outline-offset:2px;cursor:pointer}
   .pin:hover .frame{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,0.5)}
   .pin.active .frame{outline-color:#E0703F}
   .pinimg{width:100%;height:100%;object-fit:cover;display:block}
-  .cap{margin-top:7px;font-size:11px;padding:0 3px;color:#8A8474;opacity:0;transition:opacity 0.16s ease}
+  /* caption overlays the image on hover, so it adds no height */
+  .cap{position:absolute;left:0;right:0;bottom:0;margin:0;padding:18px 11px 9px;font-size:11px;line-height:1.35;color:#E8E3D6;background:linear-gradient(rgba(22,20,15,0),rgba(12,11,8,0.92));border-radius:0 0 14px 14px;opacity:0;transition:opacity 0.16s ease;pointer-events:none}
   .pin:hover .cap,.pin.active .cap{opacity:1}
-  /* mobile: pinterest-style 2-column masonry (natural aspect ratios) */
   @media(max-width:560px){
     .wrap{padding-left:10px !important;padding-right:10px !important}
-    .board{columns:2;column-gap:8px}
-    .pin{margin:0 0 8px}
     .frame{border-radius:16px}
-    /* captions stay hidden in the feed for the clean pinterest look */
+    .cap{display:none}
   }
 </style>
 </helmet>
@@ -181,6 +182,59 @@ class Component extends DCLogic {
       return spans.length > 1 ? spans[1].textContent.trim() : 'untitled';
     };
 
+    // aspect ratio of a pin, read from the frame's inline aspect-ratio
+    const aspectOf = (fig) => {
+      const f = fig.querySelector('.frame');
+      const ar = f && getComputedStyle(f).aspectRatio; // "W / H"
+      if(ar && ar.indexOf('/') > -1){
+        const [w,h] = ar.split('/').map(Number);
+        if(w && h) return w/h;
+      }
+      const img = imgOf(fig);
+      return (img && img.naturalWidth) ? img.naturalWidth/img.naturalHeight : 1;
+    };
+
+    // dynamic varied-size masonry: wide photos span 2 columns ("hero"),
+    // every tile's row-span is derived from its rendered height.
+    const HERO_AR = 1.45;   // photos wider than this become 2-column hero tiles
+    const relayout = () => {
+      const W = board.clientWidth;
+      if(!W) return;
+      const cols = W <= 560 ? 2 : (W <= 900 ? 3 : 4);
+      const gap = W <= 560 ? 8 : 14;
+      const colW = (W - (cols - 1) * gap) / cols;
+      const colH = new Array(cols).fill(0);   // running height of each column
+      figs.forEach((fig) => {
+        const img = imgOf(fig);
+        if(img && img.complete && img.naturalWidth === 0){ fig.style.display = 'none'; return; }
+        fig.style.display = '';
+        const ar = aspectOf(fig) || 1;
+        const span = (ar >= HERO_AR && cols >= 2) ? 2 : 1;
+        let c = 0;
+        if(span === 1){
+          for(let i = 1; i < cols; i++) if(colH[i] < colH[c]) c = i;
+        } else {
+          let best = Infinity;
+          for(let i = 0; i < cols - 1; i++){
+            const y = Math.max(colH[i], colH[i + 1]);
+            if(y < best){ best = y; c = i; }
+          }
+        }
+        const w = span === 1 ? colW : (2 * colW + gap);
+        const x = c * (colW + gap);
+        const y = span === 1 ? colH[c] : Math.max(colH[c], colH[c + 1]);
+        const h = w / ar;
+        fig.style.width = w + 'px';
+        fig.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
+        if(span === 1){ colH[c] = y + h + gap; }
+        else { colH[c] = colH[c + 1] = y + h + gap; }
+      });
+      board.style.height = (Math.max.apply(null, colH) - gap) + 'px';
+    };
+    this._relayout = relayout;
+    this._onResize = () => { clearTimeout(this._rt); this._rt = setTimeout(relayout, 120); };
+    window.addEventListener('resize', this._onResize);
+
     this._feature = (fig) => {
       const img = imgOf(fig);
       if(!isLoaded(img)) return;
@@ -199,8 +253,8 @@ class Component extends DCLogic {
       // cards whose photo doesn't exist (yet) simply hide
       if(img){
         if(img.complete && img.naturalWidth === 0){ fig.style.display = 'none'; }
-        img.addEventListener('error', () => { fig.style.display = 'none'; });
-        img.addEventListener('load', () => { if(!this._active) this._feature(fig); });
+        img.addEventListener('error', () => { fig.style.display = 'none'; relayout(); });
+        img.addEventListener('load', () => { relayout(); if(!this._active) this._feature(fig); });
       }
       fig.addEventListener('click', () => {
         this._feature(fig);
@@ -209,6 +263,11 @@ class Component extends DCLogic {
         }
       });
     });
+
+    // initial layout (and a few delayed passes while images/fonts settle)
+    relayout();
+    requestAnimationFrame(relayout);
+    [120, 400, 900].forEach((d) => setTimeout(relayout, d));
 
     // default: feature the first already-loaded pin (retry while images decode)
     let tries = 0;
@@ -220,6 +279,8 @@ class Component extends DCLogic {
     };
     seed();
   }
+
+  componentWillUnmount(){ if(this._onResize) window.removeEventListener('resize', this._onResize); }
 
   renderVals(){
     return {
